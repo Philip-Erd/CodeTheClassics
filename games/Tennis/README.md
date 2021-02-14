@@ -10,4 +10,4 @@ a lot of references, the constructor nedded a lot of parameters.
 
 `haxe tennis.hxml`
 
-This producess a `tennis.js` file in the out directory. In the out directory is also a '''index.html''' file
+This producess a `tennis.js` file in the out directory. In the out directory is also a `index.html` file
