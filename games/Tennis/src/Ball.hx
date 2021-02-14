@@ -5,9 +5,9 @@ class Ball extends h2d.Object {
     private var gfx:h2d.Graphics;
     private var velocity:h3d.Vector; //we only use x and y here
     private var estimatedPosition:h3d.Vector; //used for collision detection
-    private var speed = 150; //The speed of the ball
+    private var speed:Float; //The speed of the ball
 
-    private var radius = 5; //the radius of the ball
+    private var radius:Float; //the radius of the ball
 
     private var p1:Player; //The object for Player1
     private var p2:Player; //The object for Player2
@@ -22,6 +22,8 @@ class Ball extends h2d.Object {
         this.p2 = p2;
         this.scene = scene;
         this.score = score;
+
+        resize();
 
         //add graphics
         gfx = new Graphics(this);
@@ -109,6 +111,11 @@ class Ball extends h2d.Object {
         //update position
         x = x + (velocity.x * speed * dt);
         y = y + (velocity.y * speed * dt);
+    }
+
+    public function resize() {
+        speed = scene.width * 0.25;
+        radius = scene.height * 0.0125;
     }
     
 }

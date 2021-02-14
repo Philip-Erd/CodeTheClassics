@@ -7,8 +7,13 @@ class Score extends h2d.Object {
 
     var gfx:h2d.Text;
 
-    public function new(){
+    var scene:h2d.Scene;
+
+    public function new(scene:h2d.Scene){
         super();
+        this.scene = scene;
+
+        resize();
 
         gfx = new h2d.Text(hxd.res.DefaultFont.get(), this);
         gfx.textAlign = Center;
@@ -33,5 +38,9 @@ class Score extends h2d.Object {
         p2Score += 1;
         //update the graphics
         updateGfx();
+    }
+
+    public function resize(){
+        this.setScale(scene.width * 0.005);
     }
 }

@@ -1192,13 +1192,12 @@ h2d_Object.prototype = {
 	,__class__: h2d_Object
 };
 var Ball = function(p1,p2,scene,score) {
-	this.radius = 5;
-	this.speed = 150;
 	h2d_Object.call(this);
 	this.p1 = p1;
 	this.p2 = p2;
 	this.scene = scene;
 	this.score = score;
+	this.resize();
 	this.gfx = new h2d_Graphics(this);
 	this.gfx.beginFill(-1);
 	this.gfx.drawCircle(0,0,this.radius,16);
@@ -1255,6 +1254,10 @@ Ball.prototype = $extend(h2d_Object.prototype,{
 		this.x += this.velocity.x * this.speed * dt;
 		this.posChanged = true;
 		this.y += this.velocity.y * this.speed * dt;
+	}
+	,resize: function() {
+		this.speed = this.scene.width * 0.25;
+		this.radius = this.scene.height * 0.0125;
 	}
 	,__class__: Ball
 });
@@ -1385,11 +1388,9 @@ Main.main = function() {
 Math.__name__ = "Math";
 var Player = function(playerNumber,scene) {
 	this.moveV = 0;
-	this.height = 60;
-	this.width = 10;
-	this.speed = 200;
 	h2d_Object.call(this);
 	this.scene = scene;
+	this.resize();
 	if(playerNumber == 1) {
 		this.keyUp = 87;
 		this.keyDown = 83;
@@ -1417,6 +1418,11 @@ Player.prototype = $extend(h2d_Object.prototype,{
 		var v = Math.min(Math.max(this.height / 2,this.y + this.moveV * this.speed * dt),this.scene.height - this.height / 2);
 		this.posChanged = true;
 		this.y = v;
+	}
+	,resize: function() {
+		this.height = this.scene.height * 0.15;
+		this.width = this.scene.width * 0.015;
+		this.speed = this.scene.height * 0.5;
 	}
 	,__class__: Player
 });
@@ -1485,10 +1491,12 @@ Reflect.deleteField = function(o,field) {
 	delete(o[field]);
 	return true;
 };
-var Score = function() {
+var Score = function(scene) {
 	this.p2Score = 0;
 	this.p1Score = 0;
 	h2d_Object.call(this);
+	this.scene = scene;
+	this.resize();
 	this.gfx = new h2d_Text(hxd_res_DefaultFont.get(),this);
 	this.gfx.set_textAlign(h2d_Align.Center);
 	this.updateGfx();
@@ -1507,6 +1515,13 @@ Score.prototype = $extend(h2d_Object.prototype,{
 	,p2Scored: function() {
 		this.p2Score += 1;
 		this.updateGfx();
+	}
+	,resize: function() {
+		var v = this.scene.width * 0.005;
+		this.posChanged = true;
+		this.scaleX = v;
+		this.posChanged = true;
+		this.scaleY = v;
 	}
 	,__class__: Score
 });
@@ -1837,8 +1852,9 @@ Tennis.prototype = $extend(hxd_App.prototype,{
 	init: function() {
 		this.player1 = new Player(1,this.s2d);
 		this.player2 = new Player(2,this.s2d);
-		this.score = new Score();
+		this.score = new Score(this.s2d);
 		this.ball = new Ball(this.player1,this.player2,this.s2d,this.score);
+		this.field = new h2d_Graphics(this.s2d);
 		this.s2d.addChild(this.player1);
 		this.s2d.addChild(this.player2);
 		this.s2d.addChild(this.score);
@@ -1863,26 +1879,26 @@ Tennis.prototype = $extend(hxd_App.prototype,{
 		_this.x = this.s2d.width / 2;
 		_this.posChanged = true;
 		_this.y = 10;
-		var _this = this.score;
+		var _this = this.field;
 		_this.posChanged = true;
-		_this.scaleX = 3;
+		_this.x = 0;
 		_this.posChanged = true;
-		_this.scaleY = 3;
-		var field = new h2d_Graphics(this.s2d);
-		field.posChanged = true;
-		field.x = 0;
-		field.posChanged = true;
-		field.y = 0;
-		field.lineStyle(2,-1);
-		field.addVertex(0,0,field.curR,field.curG,field.curB,field.curA,0 * field.ma + 0 * field.mc + field.mx,0 * field.mb + 0 * field.md + field.my);
+		_this.y = 0;
+		this.field.lineStyle(2,-1);
+		var _this = this.field;
+		_this.addVertex(0,0,_this.curR,_this.curG,_this.curB,_this.curA,0 * _this.ma + 0 * _this.mc + _this.mx,0 * _this.mb + 0 * _this.md + _this.my);
+		var _this = this.field;
 		var x = this.s2d.width;
-		field.addVertex(x,0,field.curR,field.curG,field.curB,field.curA,x * field.ma + 0 * field.mc + field.mx,x * field.mb + 0 * field.md + field.my);
+		_this.addVertex(x,0,_this.curR,_this.curG,_this.curB,_this.curA,x * _this.ma + 0 * _this.mc + _this.mx,x * _this.mb + 0 * _this.md + _this.my);
+		var _this = this.field;
 		var x = this.s2d.width;
 		var y = this.s2d.height;
-		field.addVertex(x,y,field.curR,field.curG,field.curB,field.curA,x * field.ma + y * field.mc + field.mx,x * field.mb + y * field.md + field.my);
+		_this.addVertex(x,y,_this.curR,_this.curG,_this.curB,_this.curA,x * _this.ma + y * _this.mc + _this.mx,x * _this.mb + y * _this.md + _this.my);
+		var _this = this.field;
 		var y = this.s2d.height;
-		field.addVertex(0,y,field.curR,field.curG,field.curB,field.curA,0 * field.ma + y * field.mc + field.mx,0 * field.mb + y * field.md + field.my);
-		field.addVertex(0,0,field.curR,field.curG,field.curB,field.curA,0 * field.ma + 0 * field.mc + field.mx,0 * field.mb + 0 * field.md + field.my);
+		_this.addVertex(0,y,_this.curR,_this.curG,_this.curB,_this.curA,0 * _this.ma + y * _this.mc + _this.mx,0 * _this.mb + y * _this.md + _this.my);
+		var _this = this.field;
+		_this.addVertex(0,0,_this.curR,_this.curG,_this.curB,_this.curA,0 * _this.ma + 0 * _this.mc + _this.mx,0 * _this.mb + 0 * _this.md + _this.my);
 	}
 	,update: function(dt) {
 		this.player1.update(dt);

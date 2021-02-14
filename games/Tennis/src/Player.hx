@@ -2,7 +2,7 @@
 
 class Player extends h2d.Object {
 
-    private var speed = 200;
+    private var speed:Float;
 
     private var gfx:h2d.Graphics;
     private var scene:h2d.Scene; //used for clamping the the paddles to the screen dimensions
@@ -10,8 +10,8 @@ class Player extends h2d.Object {
     private var keyUp:Int;
     private var keyDown:Int;
 
-    public var width = 10;
-    public var height = 60;
+    public var width:Float;
+    public var height:Float;
     public var moveV = 0;
 
 
@@ -19,6 +19,8 @@ class Player extends h2d.Object {
     public function new(playerNumber: Int, scene:h2d.Scene){
         super();
         this.scene = scene;
+
+        resize();
 
         //assining the proper keys
         if(playerNumber == 1){
@@ -54,6 +56,14 @@ class Player extends h2d.Object {
         //look rough, but it only adds the move value (multiplied by the speed and dt)
         //to the current y position and clamps it between the screen size
         y = Math.min(Math.max(height /2, y + (moveV * speed * dt)), scene.height - (height /2));
+    }
+
+
+    public function resize() {
+        //calculating size depending on screensize
+        height = scene.height * 0.15;
+        width = scene.width * 0.015;
+        speed = scene.height * 0.5;
     }
 
 
