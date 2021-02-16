@@ -1,8 +1,0 @@
-
-
--cp src
---main Main
-
---library heaps
-
--js out/tennis.js
