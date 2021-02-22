@@ -1,0 +1,9 @@
+
+
+-cp src
+
+--main Main
+
+--library heaps
+
+-js out/spaceInvasion.js
