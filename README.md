@@ -1,8 +1,7 @@
 # CodeTheClassics
-A repository where I try to recode some classic video games (or games inspired by them) using haxe and heaps.
+A repository where I try to recode some classic video games (or games inspired by them) using various game engines and frameworks.
 
-I am very new to haxe and heaps, so this is my learning experience. All the games
-ar in the games subfolder.
+All the games are in the games subfolder.
 
 You can try out the games [here](https://philip-erd.github.io/CodeTheClassics/).
 
