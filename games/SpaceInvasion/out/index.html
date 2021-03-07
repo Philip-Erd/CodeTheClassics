@@ -12,13 +12,24 @@
         }
 
         canvas#webgl {
+            position: fixed;
             width: 800px;
             height: 400px;
+            top: 50%;
+            left: 50%;
+            margin-top: -200px;
+            margin-left: -400px;
+        }
+
+        h1{
+            align-self: center;
+            color: white;
         }
     </style>
 </head>
 
 <body>
+    <h1>Space Invasion</h1>
     <canvas id="webgl"></canvas>
     <script type="text/javascript" src="spaceInvasion.js"></script>
 </body>
