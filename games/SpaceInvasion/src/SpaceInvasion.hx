@@ -1,7 +1,9 @@
-
+import h2d.Bitmap;
 
 
 class SpaceInvasion extends hxd.App{
+
+    private var tiles:{tiles:Array<Array<h2d.Tile>>, main:h2d.Tile};
 
     private var gameOver = false;
     private var gameOverText:h2d.Text;
@@ -27,8 +29,22 @@ class SpaceInvasion extends hxd.App{
     override function init() {
         super.init();
 
-        alienLeftMostPosition = 10;
-        alienRightMostPosition = s2d.width -10;
+        //Sprites
+        var image = hxd.Res.img.toBitmap();                     //generating tiles
+        tiles = h2d.Tile.autoCut(image, 8, 8);
+
+        var alien1Tiles = new Array<h2d.Tile>();                //first type of alien
+        alien1Tiles.insert(0, tiles.tiles[0][0]);               //These are created as an array for the h2d.Anim player
+        alien1Tiles.insert(1, tiles.tiles[0][1]);
+
+        var alien2Tiles = new Array<h2d.Tile>();                //second type of alien
+        alien2Tiles.insert(0, tiles.tiles[1][1]);               //These are created as an array for the h2d.Anim player
+        alien2Tiles.insert(1, tiles.tiles[1][0]);
+
+        
+
+        alienLeftMostPosition = 12;
+        alienRightMostPosition = s2d.width -12;
         alienVerticalLimit = s2d.height -50;
 
         //boarder
@@ -43,10 +59,11 @@ class SpaceInvasion extends hxd.App{
 
         //create player
         player = new h2d.Object(s2d);
-        var playerGfx = new h2d.Graphics(player);
-        playerGfx.beginFill(0xFFFFFFFF);
-        playerGfx.drawRect(-5, -5, 10, 10);
-        playerGfx.endFill();
+
+        //creating the tile for the player ship 
+        var playerTile = new h2d.Bitmap(tiles.tiles[0][2], player);
+        playerTile.setPosition(-10, -10);
+        playerTile.scale(2.5);
 
         player.setPosition(s2d.width/2, s2d.height -20);
 
@@ -76,10 +93,21 @@ class SpaceInvasion extends hxd.App{
         for(x in 0...alienCol){
             for(y in 0...alienRows){
                 var alien = new h2d.Object(s2d);
-                var alienGfx = new h2d.Graphics(alien);
-                alienGfx.beginFill(0xFFFFFFFF);
-                alienGfx.drawCircle(0, 0, 10, 8);
-                alienGfx.endFill();
+
+                var alienAnim:h2d.Anim;
+
+                //create different Tiles, depending on der vertical position in the grid
+                if(y < 2){
+                    alienAnim = new h2d.Anim(alien1Tiles, 2, alien);
+                }
+                else{
+                    alienAnim = new h2d.Anim(alien2Tiles, 2, alien);
+                }
+
+                alienAnim.setPosition(-10, -10);
+                alienAnim.scale(2.5);
+                
+
                 var px = ((s2d.width - 50) / alienCol) * x + 50;
                 var py = ((s2d.height - 200) / alienRows) * y + 20;
                 alien.setPosition(px, py);

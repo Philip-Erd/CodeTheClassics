@@ -128,7 +128,7 @@ var Main = function() { };
 $hxClasses["Main"] = Main;
 Main.__name__ = "Main";
 Main.main = function() {
-	hxd_Res.set_loader(new hxd_res_Loader(new hxd_fs_EmbedFileSystem(haxe_Unserializer.run("og"))));
+	hxd_Res.set_loader(new hxd_res_Loader(new hxd_fs_EmbedFileSystem(haxe_Unserializer.run("oy7:img.pngtg"))));
 	new SpaceInvasion();
 };
 Math.__name__ = "Math";
@@ -385,8 +385,16 @@ SpaceInvasion.__super__ = hxd_App;
 SpaceInvasion.prototype = $extend(hxd_App.prototype,{
 	init: function() {
 		hxd_App.prototype.init.call(this);
-		this.alienLeftMostPosition = 10;
-		this.alienRightMostPosition = this.s2d.width - 10;
+		var image = hxd_Res.get_loader().loadCache("img.png",hxd_res_Image).toBitmap();
+		this.tiles = h2d_Tile.autoCut(image,8,8);
+		var alien1Tiles = [];
+		alien1Tiles.splice(0,0,this.tiles.tiles[0][0]);
+		alien1Tiles.splice(1,0,this.tiles.tiles[0][1]);
+		var alien2Tiles = [];
+		alien2Tiles.splice(0,0,this.tiles.tiles[1][1]);
+		alien2Tiles.splice(1,0,this.tiles.tiles[1][0]);
+		this.alienLeftMostPosition = 12;
+		this.alienRightMostPosition = this.s2d.width - 12;
 		this.alienVerticalLimit = this.s2d.height - 50;
 		var field = new h2d_Graphics(this.s2d);
 		field.posChanged = true;
@@ -404,10 +412,15 @@ SpaceInvasion.prototype = $extend(hxd_App.prototype,{
 		field.addVertex(0,y,field.curR,field.curG,field.curB,field.curA,0 * field.ma + y * field.mc + field.mx,0 * field.mb + y * field.md + field.my);
 		field.addVertex(0,0,field.curR,field.curG,field.curB,field.curA,0 * field.ma + 0 * field.mc + field.mx,0 * field.mb + 0 * field.md + field.my);
 		this.player = new h2d_Object(this.s2d);
-		var playerGfx = new h2d_Graphics(this.player);
-		playerGfx.beginFill(-1);
-		playerGfx.drawRect(-5,-5,10,10);
-		playerGfx.endFill();
+		var playerTile = new h2d_Bitmap(this.tiles.tiles[0][2],this.player);
+		playerTile.posChanged = true;
+		playerTile.x = -10;
+		playerTile.posChanged = true;
+		playerTile.y = -10;
+		playerTile.posChanged = true;
+		playerTile.scaleX *= 2.5;
+		playerTile.posChanged = true;
+		playerTile.scaleY *= 2.5;
 		var _this = this.player;
 		_this.posChanged = true;
 		_this.x = this.s2d.width / 2;
@@ -446,10 +459,20 @@ SpaceInvasion.prototype = $extend(hxd_App.prototype,{
 			while(_g2 < _g3) {
 				var y = _g2++;
 				var alien = new h2d_Object(this.s2d);
-				var alienGfx = new h2d_Graphics(alien);
-				alienGfx.beginFill(-1);
-				alienGfx.drawCircle(0,0,10,8);
-				alienGfx.endFill();
+				var alienAnim;
+				if(y < 2) {
+					alienAnim = new h2d_Anim(alien1Tiles,2,alien);
+				} else {
+					alienAnim = new h2d_Anim(alien2Tiles,2,alien);
+				}
+				alienAnim.posChanged = true;
+				alienAnim.x = -10;
+				alienAnim.posChanged = true;
+				alienAnim.y = -10;
+				alienAnim.posChanged = true;
+				alienAnim.scaleX *= 2.5;
+				alienAnim.posChanged = true;
+				alienAnim.scaleY *= 2.5;
 				var px = (this.s2d.width - 50) / this.alienCol * x + 50;
 				var py = (this.s2d.height - 200) / this.alienRows * y + 20;
 				alien.posChanged = true;
@@ -5511,6 +5534,103 @@ h2d_Drawable.prototype = $extend(h2d_Object.prototype,{
 		}
 	}
 	,__class__: h2d_Drawable
+});
+var h2d_Anim = function(frames,speed,parent) {
+	if(speed == null) {
+		speed = 15;
+	}
+	this.fading = false;
+	this.loop = true;
+	this.pause = false;
+	h2d_Drawable.call(this,parent);
+	this.frames = frames == null ? [] : frames;
+	this.curFrame = 0;
+	this.speed = speed;
+};
+$hxClasses["h2d.Anim"] = h2d_Anim;
+h2d_Anim.__name__ = "h2d.Anim";
+h2d_Anim.__super__ = h2d_Drawable;
+h2d_Anim.prototype = $extend(h2d_Drawable.prototype,{
+	get_currentFrame: function() {
+		return this.curFrame;
+	}
+	,play: function(frames,atFrame) {
+		if(atFrame == null) {
+			atFrame = 0.;
+		}
+		this.frames = frames == null ? [] : frames;
+		this.set_currentFrame(atFrame);
+		this.pause = false;
+	}
+	,onAnimEnd: function() {
+	}
+	,set_currentFrame: function(frame) {
+		this.curFrame = this.frames.length == 0 ? 0 : frame % this.frames.length;
+		if(this.curFrame < 0) {
+			this.curFrame += this.frames.length;
+		}
+		return this.curFrame;
+	}
+	,getBoundsRec: function(relativeTo,out,forSize) {
+		h2d_Drawable.prototype.getBoundsRec.call(this,relativeTo,out,forSize);
+		var tile = this.getFrame();
+		if(tile != null) {
+			this.addBounds(relativeTo,out,tile.dx,tile.dy,tile.width,tile.height);
+		}
+	}
+	,sync: function(ctx) {
+		h2d_Drawable.prototype.sync.call(this,ctx);
+		var prev = this.curFrame;
+		if(!this.pause) {
+			this.curFrame += this.speed * ctx.elapsedTime;
+		}
+		if(this.curFrame < this.frames.length) {
+			return;
+		}
+		if(this.loop) {
+			if(this.frames.length == 0) {
+				this.curFrame = 0;
+			} else {
+				this.curFrame %= this.frames.length;
+			}
+			this.onAnimEnd();
+		} else if(this.curFrame >= this.frames.length) {
+			this.curFrame = this.frames.length;
+			if(this.curFrame != prev) {
+				this.onAnimEnd();
+			}
+		}
+	}
+	,getFrame: function() {
+		var i = this.curFrame | 0;
+		if(i == this.frames.length) {
+			--i;
+		}
+		return this.frames[i];
+	}
+	,draw: function(ctx) {
+		var t = this.getFrame();
+		if(this.fading) {
+			var i = (this.curFrame | 0) + 1;
+			if(i >= this.frames.length) {
+				if(!this.loop) {
+					return;
+				}
+				i = 0;
+			}
+			var t2 = this.frames[i];
+			var old = ctx.globalAlpha;
+			var alpha = this.curFrame - (this.curFrame | 0);
+			ctx.globalAlpha *= 1 - alpha;
+			this.emitTile(ctx,t);
+			ctx.globalAlpha = old * alpha;
+			this.emitTile(ctx,t2);
+			ctx.globalAlpha = old;
+		} else {
+			this.emitTile(ctx,t);
+		}
+	}
+	,__class__: h2d_Anim
 });
 var h2d_Bitmap = function(tile,parent) {
 	h2d_Drawable.call(this,parent);
@@ -67583,7 +67703,7 @@ var Float = Number;
 var Bool = Boolean;
 var Class = { };
 var Enum = { };
-haxe_Resource.content = [];
+haxe_Resource.content = [{ name : "R_img_png", data : "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABhWlDQ1BJQ0MgcHJvZmlsZQAAKJF9kT1Iw0AcxV9bpVIqDhYRcchQBcGiqIijVqEIFUKt0KqDyaVf0KQhSXFxFFwLDn4sVh1cnHV1cBUEwQ8QNzcnRRcp8X9JoUWMB8f9eHfvcfcO8NfLTDU7xgFVs4xUIi5ksqtC8BUB9CGEEYxJzNTnRDEJz/F1Dx9f72I8y/vcn6NbyZkM8AnEs0w3LOIN4ulNS+e8TxxhRUkhPiceNeiCxI9cl11+41xw2M8zI0Y6NU8cIRYKbSy3MSsaKvEUcVRRNcr3Z1xWOG9xVstV1rwnf2E4p60sc53mIBJYxBJECJBRRQllWIjRqpFiIkX7cQ//gOMXySWTqwRGjgVUoEJy/OB/8LtbMz854SaF40Dni21/DAHBXaBRs+3vY9tunACBZ+BKa/krdWDmk/RaS4seAT3bwMV1S5P3gMsdoP9JlwzJkQI0/fk88H5G35QFem+B0JrbW3Mfpw9AmrpK3gAHh8BwgbLXPd7d1d7bv2ea/f0An8tyuVENOqoAAAAGYktHRAD/AP8A/6C9p5MAAAAJcEhZcwAALiMAAC4jAXilP3YAAAAHdElNRQflAxYKKzjrapIjAAAAGXRFWHRDb21tZW50AENyZWF0ZWQgd2l0aCBHSU1QV4EOFwAAAIpJREFUWMPtlOEOgCAIhL3W+79y/cnNNQRBrLXu++kNOAUpJZHjwhOz10BJBIARfQZ4HWsmai6PsU1KJCWw9PYinkshowUzLULP9T24p7fn2pk5hFLBNqGmT82QVVArNNJrl0nrH0f++fIZSDHw5iJK2wOffYHhTRbddO7iEUPLX+ARA4QQQgj5LScsXbPkwNtAOgAAAABJRU5ErkJggg"}];
 haxe_ds_ObjectMap.count = 0;
 haxe_MainLoop.add(hxd_System.updateCursor,-1);
 var hx__registerFont;
