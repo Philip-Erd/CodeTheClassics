@@ -5,6 +5,7 @@
 #include "raylib.h"
 #include "raymath.h"
 #include "util.h"
+#include "player.h"
 
 namespace Dogfight
 {
