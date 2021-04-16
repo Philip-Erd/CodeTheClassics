@@ -1,3 +1,4 @@
 Note everything in the folder "./raylib" is EXCLUDET from the main MIT license.
 
-You can find more information about Raylib here: https://github.com/raysan5/raylib
+Raylib: Copyright (c) 2013-2021 Ramon Santamaria (@raysan5)
+You can find more information about Raylib here: https://github.com/raysan5/raylib or https://www.raylib.com/
