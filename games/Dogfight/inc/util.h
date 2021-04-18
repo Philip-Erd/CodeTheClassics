@@ -1,14 +1,26 @@
 
-#ifndef DOG_UTIL_H
-#define DOG_UTIL_H
+#pragma once
 
-#include "game.h"
+#include "raylib.h"
 
 namespace Dogfight
 {
+
+
+    //timer
+    class Timer{
+        public:
+            void setTime(double milliseconds);
+            void start();
+            bool hasStopt();
+        private:
+            double waitTime;
+            double startTime;
+    };
+
+
+
     //Basic camera setup
     void setupCamera(Camera &camera);
 
 } // namespace Dogfight
-
-#endif

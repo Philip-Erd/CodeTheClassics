@@ -1,11 +1,14 @@
+#pragma once
 
-#ifndef GAME_H
-#define GAME_H
 
+#include "environment.h"
 #include "raylib.h"
-#include "raymath.h"
 #include "util.h"
 #include "player.h"
+
+#include "raymath.h"
+//#include "rlights.h"
+
 
 namespace Dogfight
 {
@@ -13,5 +16,3 @@ namespace Dogfight
     void updateGame(float deltaTime);   //general update function
     void drawGame();                    //general draw function
 }
-
-#endif

@@ -5,8 +5,8 @@
 #include <emscripten/emscripten.h>
 
 
-int screenWidth = 800;
-int screenHeight = 450;
+int screenWidth = 1200;
+int screenHeight = 675;
 
 
 
