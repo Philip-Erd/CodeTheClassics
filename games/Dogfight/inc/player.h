@@ -9,9 +9,9 @@
 
 
 #define PITCH_SPEED 5
-#define ROLL_SPEED 2
-#define YAW_SPEED 5
-#define AIR_SPEED 10
+#define ROLL_SPEED 0.5
+#define YAW_SPEED 2
+#define AIR_SPEED 50
 
 namespace Dogfight
 {
@@ -32,6 +32,9 @@ namespace Dogfight
 
     private:
         Vector3 getUpVector3();         //returns a vector that points up
+        float pitch;
+        float yaw;
+        float roll;
         
         
     

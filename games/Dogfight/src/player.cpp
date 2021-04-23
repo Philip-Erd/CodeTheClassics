@@ -6,19 +6,15 @@ namespace Dogfight
     void Player::update(float dt)
     {
 
-        Matrix inverse_transform3D = MatrixInvert(transform3D);
         //get input
-        float yaw = GetGamepadAxisMovement(playerNumber, 0);
-        float pitch = GetGamepadAxisMovement(playerNumber, 1);
-        float roll = 0;
+        yaw = -GetGamepadAxisMovement(playerNumber, 0);
+        pitch = GetGamepadAxisMovement(playerNumber, 1);
+        roll = yaw;
 
         Matrix matrix_pitch = MatrixRotateX(pitch * PITCH_SPEED * dt);
-        Vector3 up = getUpVector3();
-        Matrix matrix_yaw = MatrixRotate(up, yaw * YAW_SPEED * dt);
-        //matrix_yaw = MatrixMultiply(matrix_yaw, MatrixTranslate(position.x, position.y, position.z));
+        Matrix matrix_yaw = MatrixRotate(getUpVector3(), yaw * YAW_SPEED * dt);
 
         Matrix matrix_translation = MatrixTranslate(0, 0, AIR_SPEED * dt);
-        //matrix_translation = MatrixMultiply(matrix_rotation, matrix_translation);
 
         transform3D = MatrixMultiply(matrix_pitch, transform3D);
         transform3D = MatrixMultiply(matrix_yaw, transform3D);
@@ -29,7 +25,11 @@ namespace Dogfight
 
     void Player::draw()
     {
-        model.transform = transform3D;
+        //some fancy roll animation
+        Matrix model_transform3D = transform3D;
+        Matrix rotation = MatrixRotateZ(yaw * ROLL_SPEED);
+        model.transform = MatrixMultiply(rotation, model_transform3D);
+
         DrawModel(model, Vector3Zero(), 1, WHITE);
     }
 
