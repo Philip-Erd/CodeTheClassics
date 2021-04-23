@@ -23,4 +23,5 @@ namespace Dogfight
     //Basic camera setup
     void setupCamera(Camera &camera);
 
+
 } // namespace Dogfight

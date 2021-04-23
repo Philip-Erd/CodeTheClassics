@@ -2,6 +2,7 @@
 CXXFLAGS = -O2 -I ./inc -I ./raylib/raylib-3.5.0_webassembly/include -I ./raylib/raylib/src
 CXXFLAGS += -s USE_GLFW=3 -s TOTAL_MEMORY=67108864 -s FORCE_FILESYSTEM=1 
 
+
 OBJS = ./out/main.o ./out/game.o ./out/util.o ./out/player.o ./out/environment.o
 
 web : ${OBJS}

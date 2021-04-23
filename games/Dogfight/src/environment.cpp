@@ -6,7 +6,7 @@ namespace Dogfight
 {
     
     void Environment::draw(){
-        DrawGrid(50, 1);
+        DrawGrid(100, 10);
     }
 
     void Environment::generate(){
