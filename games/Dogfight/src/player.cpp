@@ -21,14 +21,22 @@ namespace Dogfight
         transform3D = MatrixMultiply(matrix_translation, transform3D);
 
         position = Vector3Transform((Vector3){0, 0, 0}, transform3D);
-    }
 
-    void Player::draw()
-    {
+        //rendering updates
         //some fancy roll animation
         Matrix model_transform3D = transform3D;
         Matrix rotation = MatrixRotateZ(yaw * ROLL_SPEED);
         model.transform = MatrixMultiply(rotation, model_transform3D);
+
+        normalMatrix = MatrixInvert(model_transform3D);
+        normalMatrix = MatrixTranspose(normalMatrix);
+
+    }
+
+    void Player::draw()
+    {
+
+        SetShaderValueMatrix(model.materials[0].shader, normalMatrixLocation, normalMatrix);
 
         DrawModel(model, Vector3Zero(), 1, WHITE);
     }

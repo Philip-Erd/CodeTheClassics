@@ -23,6 +23,7 @@ namespace Dogfight
         Vector3 position;   //global position vector
         Model model;        //the model to render
         bool active = true; //if player can fly or is destroyed
+        int normalMatrixLocation;
 
         void update(float deltaTime); //update the player
         void draw();                               //draw the player mesh NOT render the player camera
@@ -35,6 +36,7 @@ namespace Dogfight
         float pitch;
         float yaw;
         float roll;
+        Matrix normalMatrix;
         
         
     

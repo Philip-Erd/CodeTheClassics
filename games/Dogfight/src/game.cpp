@@ -27,8 +27,6 @@ namespace Dogfight
     Rectangle viewportP1;
     Rectangle viewportP2;
 
-    Shader simpleShader;
-
     bool player1Available = true;
     bool player2Available = true;
 
@@ -37,7 +35,16 @@ namespace Dogfight
     {
 
         //shader
-        simpleShader = LoadShader("res/simple.vs", "res/simple.fs");
+        Shader simpleShader = LoadShader("res/simple.vs", "res/simple.fs");
+        Shader diffuseShader = LoadShader("res/diffuseShader/diffuse.vs", "res/diffuseShader/diffuse.fs");
+
+        //set sun
+        float sunDir[] = {-1.0, 0.0, 0.0};
+        //SetShaderValue(diffuseShader, GetShaderLocation(diffuseShader, "sunDir"), sunDir, SHADER_UNIFORM_VEC3);
+        SetShaderValue(diffuseShader, GetShaderLocation(diffuseShader, "sunDir"), sunDir, 2);
+        float sunColor[] = {1.0, 1.0, 0.5};
+        //SetShaderValue(diffuseShader, GetShaderLocation(diffuseShader, "sunColor"), sunColor, SHADER_UNIFORM_VEC3);
+        SetShaderValue(diffuseShader, GetShaderLocation(diffuseShader, "sunColor"), sunColor, 2);
 
 #pragma region Player
 
@@ -45,14 +52,23 @@ namespace Dogfight
         player1.model = LoadModel("res/Plane1.gltf");
         player2.model = LoadModel("res/Plane1.gltf");
         //load textures
-        Texture textureP1 = LoadTexture("res/checker.png");
-        Texture textureP2 = LoadTexture("res/checker.png");
+        Texture textureP1 = LoadTexture("res/Color_p1.png");
+        Texture textureP2 = LoadTexture("res/Color_p2.png");
 
-        player1.model.materials[0].shader = simpleShader;
+        player1.model.materials[0].shader = diffuseShader;
         player1.model.materials[0].maps[MAP_DIFFUSE].texture = textureP1;
         player1.model.materials[0].maps[MAP_DIFFUSE].color = WHITE;
 
-        player2.model.materials[0].shader = simpleShader;
+        player2.model.materials[0].shader = diffuseShader;
+        player2.model.materials[0].maps[MAP_DIFFUSE].texture = textureP2;
+        player2.model.materials[0].maps[MAP_DIFFUSE].color = WHITE;
+
+        int normalMatrixLocation = GetShaderLocation(diffuseShader, "matNormal");
+        if(normalMatrixLocation == -1){
+            std::cout << "couldn get matNormal location";
+        }
+        player1.normalMatrixLocation = normalMatrixLocation;
+        player2.normalMatrixLocation = normalMatrixLocation;
 
         //initialize transforms
         player1.transform3D = MatrixTranslate(0, 0, 0);
@@ -116,9 +132,7 @@ namespace Dogfight
             player2.setCamera(cameraP2);            //update camera
 
         }
-
-        
-        
+ 
 
     }
 
