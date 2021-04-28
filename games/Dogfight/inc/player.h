@@ -30,14 +30,12 @@ namespace Dogfight
 
         void setCamera(Camera &camera); //transforms the raylib camera to the right position+rotation
 
-        float airspeed = 0.025f;
-
     private:
         Vector3 getUpVector3(); //returns a vector that points up
         float pitch;
         float yaw;
         float roll;
-
+        float airspeed = 0.025f;
         float down;
         Matrix normalMatrix; //Normal matrix used for lighting
     };
