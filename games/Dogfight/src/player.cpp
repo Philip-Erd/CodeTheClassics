@@ -7,12 +7,15 @@ namespace Dogfight
     {
 
         //get input
-        yaw = -GetGamepadAxisMovement(playerNumber, 0);
-        pitch = GetGamepadAxisMovement(playerNumber, 1);
+        float i_yaw = -GetGamepadAxisMovement(playerNumber, 0);
+        float i_pitch = GetGamepadAxisMovement(playerNumber, 1);
+        yaw = damp(yaw, i_yaw, 2 * dt);
+        pitch = damp(pitch, i_pitch, 2 * dt);
+
         roll = yaw;
 
-        Matrix matrix_pitch = MatrixRotateX(pitch * PITCH_SPEED * dt);
-        Matrix matrix_yaw = MatrixRotate(getUpVector3(), yaw * YAW_SPEED * dt);
+        Matrix matrix_pitch = MatrixRotateX(pitch * PITCH_SPEED);
+        Matrix matrix_yaw = MatrixRotate(getUpVector3(), yaw * YAW_SPEED);
 
         Matrix matrix_translation = MatrixTranslate(0, 0, AIR_SPEED * dt);
 

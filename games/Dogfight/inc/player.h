@@ -8,9 +8,9 @@
 #include <iostream>
 
 
-#define PITCH_SPEED 5
+#define PITCH_SPEED 0.05
 #define ROLL_SPEED 0.5
-#define YAW_SPEED 2
+#define YAW_SPEED 0.05
 #define AIR_SPEED 50
 
 namespace Dogfight
@@ -30,6 +30,8 @@ namespace Dogfight
         void drawGizmo();                          //draw additional stuff
 
         void setCamera(Camera &camera); //transforms the raylib camera to the right position+rotation
+
+        
 
     private:
         Vector3 getUpVector3();         //returns a vector that points up

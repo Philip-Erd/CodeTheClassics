@@ -41,6 +41,14 @@ namespace Dogfight
         camera.fovy = 50.0f;
     }
 
+    float damp(float input, float target, float value){
+        float res = Lerp(input, target, value);
+        res = Clamp(res, -1, 1);
+        
+        return res;
+
+    }
+
 
 
 }
