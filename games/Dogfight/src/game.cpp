@@ -194,7 +194,7 @@ namespace Dogfight
         DrawTextureRec(renderTargetP1.texture, viewportP1, (Vector2){0, 0}, WHITE);
         DrawTextureRec(renderTargetP2.texture, viewportP2, (Vector2){0, (float)GetScreenHeight() / 2}, WHITE);
 
-        DrawText(TextFormat("Airspeed: %f", player1.airspeed), 10, 10, 32, BLACK);
+        //DrawText(TextFormat("Airspeed: %f", player1.airspeed), 10, 10, 32, BLACK);
 
         EndDrawing();
     }
