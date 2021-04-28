@@ -11,13 +11,17 @@ namespace Dogfight
         float i_pitch = GetGamepadAxisMovement(playerNumber, 1);
         yaw = damp(yaw, i_yaw, 2 * dt);
         pitch = damp(pitch, i_pitch, 2 * dt);
-
         roll = yaw;
+
+        //Calculating how much the nose is pointing down
+        down = Vector3Distance(Vector3Add({0, 1, 0}, position), Vector3Transform({0, 0, 1}, transform3D));
+        airspeed = Lerp(airspeed, down * dt * 3, 0.002f);
+        airspeed = Clamp(airspeed, 0.01, 0.1);
 
         Matrix matrix_pitch = MatrixRotateX(pitch * PITCH_SPEED);
         Matrix matrix_yaw = MatrixRotate(getUpVector3(), yaw * YAW_SPEED);
 
-        Matrix matrix_translation = MatrixTranslate(0, 0, AIR_SPEED * dt);
+        Matrix matrix_translation = MatrixTranslate(0, 0, airspeed * AIR_SPEED);
 
         transform3D = MatrixMultiply(matrix_pitch, transform3D);
         transform3D = MatrixMultiply(matrix_yaw, transform3D);
@@ -70,6 +74,7 @@ namespace Dogfight
         Vector3 up = {0, 1, 0};
         up = Vector3Add(up, position);
         up = Vector3Transform(up, MatrixInvert(transform3D));
+        up = Vector3Normalize(up);
         return up;
     }
 } // namespace Dogfight

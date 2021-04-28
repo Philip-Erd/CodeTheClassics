@@ -7,11 +7,10 @@
 #include "util.h"
 #include <iostream>
 
-
 #define PITCH_SPEED 0.05
 #define ROLL_SPEED 0.5
 #define YAW_SPEED 0.05
-#define AIR_SPEED 50
+#define AIR_SPEED 20
 
 namespace Dogfight
 {
@@ -26,22 +25,20 @@ namespace Dogfight
         int normalMatrixLocation;
 
         void update(float deltaTime); //update the player
-        void draw();                               //draw the player mesh NOT render the player camera
-        void drawGizmo();                          //draw additional stuff
+        void draw();                  //draw the player mesh NOT render the player camera
+        void drawGizmo();             //draw additional stuff
 
         void setCamera(Camera &camera); //transforms the raylib camera to the right position+rotation
 
-        
+        float airspeed = 0.025f;
 
     private:
-        Vector3 getUpVector3();         //returns a vector that points up
+        Vector3 getUpVector3(); //returns a vector that points up
         float pitch;
         float yaw;
         float roll;
-        Matrix normalMatrix;
-        
-        
-    
+
+        float down;
+        Matrix normalMatrix; //Normal matrix used for lighting
     };
 } // namespace Dogfight
-
