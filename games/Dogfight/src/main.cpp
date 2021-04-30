@@ -19,6 +19,7 @@ int main()
 
     InitWindow(screenWidth, screenHeight, "Dogfight");
     SetTargetFPS(60);
+    SetConfigFlags(FLAG_MSAA_4X_HINT);
 
     Dogfight::initGame();
 

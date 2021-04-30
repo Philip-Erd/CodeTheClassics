@@ -24,9 +24,14 @@ namespace Dogfight
         bool active = true; //if player can fly or is destroyed
         int normalMatrixLocation;
 
+        int health;
+
         void update(float deltaTime); //update the player
         void draw();                  //draw the player mesh NOT render the player camera
         void drawGizmo();             //draw additional stuff
+
+        void damage(int damage);        //take the given amount of damage
+        void reset();                   //resets the player after he died
 
         void setCamera(Camera &camera); //transforms the raylib camera to the right position+rotation
 

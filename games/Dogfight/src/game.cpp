@@ -35,16 +35,20 @@ namespace Dogfight
     {
 
         //shader
-        Shader simpleShader = LoadShader("res/simple.vs", "res/simple.fs");
-        Shader diffuseShader = LoadShader("res/diffuseShader/diffuse.vs", "res/diffuseShader/diffuse.fs");
+        Shader planeShader = LoadShader("res/PlaneShader/plane.vs", "res/PlaneShader/plane.fs");
+        Shader environmentShader = LoadShader("res/EnvironmentShader/environment.vs", "res/EnvironmentShader/environment.fs");
 
         //set sun
         float sunDir[] = {-1.0, 0.0, 0.0};
         //SetShaderValue(diffuseShader, GetShaderLocation(diffuseShader, "sunDir"), sunDir, SHADER_UNIFORM_VEC3);
-        SetShaderValue(diffuseShader, GetShaderLocation(diffuseShader, "sunDir"), sunDir, 2);
-        float sunColor[] = {1.0, 1.0, 0.5};
+        SetShaderValue(planeShader, GetShaderLocation(planeShader, "sunDir"), sunDir, 2);
+        SetShaderValue(environmentShader, GetShaderLocation(environmentShader, "sunDir"), sunDir, 2);
+        float sunColor[] = {1.0, 1.0, 1.0};
         //SetShaderValue(diffuseShader, GetShaderLocation(diffuseShader, "sunColor"), sunColor, SHADER_UNIFORM_VEC3);
-        SetShaderValue(diffuseShader, GetShaderLocation(diffuseShader, "sunColor"), sunColor, 2);
+        SetShaderValue(planeShader, GetShaderLocation(planeShader, "sunColor"), sunColor, 2);
+        SetShaderValue(environmentShader, GetShaderLocation(environmentShader, "sunColor"), sunColor, 2);
+
+        
 
 #pragma region Player
 
@@ -55,15 +59,15 @@ namespace Dogfight
         Texture textureP1 = LoadTexture("res/Color_p1.png");
         Texture textureP2 = LoadTexture("res/Color_p2.png");
 
-        player1.model.materials[0].shader = diffuseShader;
+        player1.model.materials[0].shader = planeShader;
         player1.model.materials[0].maps[MAP_DIFFUSE].texture = textureP1;
         player1.model.materials[0].maps[MAP_DIFFUSE].color = WHITE;
 
-        player2.model.materials[0].shader = diffuseShader;
+        player2.model.materials[0].shader = planeShader;
         player2.model.materials[0].maps[MAP_DIFFUSE].texture = textureP2;
         player2.model.materials[0].maps[MAP_DIFFUSE].color = WHITE;
 
-        int normalMatrixLocation = GetShaderLocation(diffuseShader, "matNormal");
+        int normalMatrixLocation = GetShaderLocation(planeShader, "matNormal");
         if(normalMatrixLocation == -1){
             std::cout << "couldn get matNormal location";
         }
@@ -71,7 +75,7 @@ namespace Dogfight
         player2.normalMatrixLocation = normalMatrixLocation;
 
         //initialize transforms
-        player1.transform3D = MatrixTranslate(0, 0, 0);
+        player1.transform3D = MatrixTranslate(1000, 0, 0);
         player2.transform3D = MatrixTranslate(20, 0, 0);
 
         //set player number
@@ -80,6 +84,28 @@ namespace Dogfight
 
 
 
+#pragma endregion
+
+#pragma region environment
+        //set up the environment
+        Image heightmap = LoadImage("res/environments/0.png");
+        environment.generate(heightmap, {1000, 500, 1000});
+
+        environment.model.materials[0].shader = environmentShader;
+
+
+        Texture2D texGrass = LoadTexture("res/grass.png");
+        Texture2D texStone = LoadTexture("res/stone.png");
+        //SetTextureWrap(texGrass, TEXTURE_WRAP_REPEAT);
+        //SetTextureWrap(texStone, TEXTURE_WRAP_REPEAT);
+        SetTextureWrap(texGrass, 0);
+        SetTextureWrap(texStone, 0);
+
+        environment.model.materials[0].maps[1].texture = texGrass;
+        environment.model.materials[0].maps[2].texture = texStone;
+
+        
+        
 #pragma endregion
 
 
