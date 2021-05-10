@@ -13,7 +13,7 @@ uniform sampler2D texture0;
 uniform vec3 sunColor;
 uniform vec3 sunDir;            //sun direction not position
 
-const float ambientStrength = 0.2;
+const float ambientStrength = 0.35;
 
 
 

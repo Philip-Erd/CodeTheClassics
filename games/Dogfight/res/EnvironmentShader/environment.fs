@@ -38,7 +38,7 @@ void main()
     vec3 diffuse = diff * sunColor;
 
     
-    vec4 texel = mix(texelGrass, texelStone, texelHeight.x + 0.1);
+    vec4 texel = mix(texelGrass, texelStone, texelHeight.x + 0.4);
     vec3 result = (ambient + diffuse) * vec3(texel);
     
     
