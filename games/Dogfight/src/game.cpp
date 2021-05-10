@@ -2,8 +2,6 @@
 #include "game.h"
 #include "stdio.h"
 
-
-
 namespace Dogfight
 {
 
@@ -15,7 +13,6 @@ namespace Dogfight
     Player player2;
 
     Environment environment;
-
 
     //rendering
     Camera cameraP1 = {0};
@@ -29,7 +26,6 @@ namespace Dogfight
 
     bool player1Available = true;
     bool player2Available = true;
-
 
     void initGame()
     {
@@ -48,9 +44,11 @@ namespace Dogfight
         SetShaderValue(planeShader, GetShaderLocation(planeShader, "sunColor"), sunColor, 2);
         SetShaderValue(environmentShader, GetShaderLocation(environmentShader, "sunColor"), sunColor, 2);
 
-        
-
 #pragma region Player
+
+        //health
+        player1.health = 100;
+        player2.health = 100;
 
         //load player models
         player1.model = LoadModel("res/Plane1.gltf");
@@ -68,31 +66,28 @@ namespace Dogfight
         player2.model.materials[0].maps[MAP_DIFFUSE].color = WHITE;
 
         int normalMatrixLocation = GetShaderLocation(planeShader, "matNormal");
-        if(normalMatrixLocation == -1){
-            std::cout << "couldn get matNormal location";
-        }
+
         player1.normalMatrixLocation = normalMatrixLocation;
         player2.normalMatrixLocation = normalMatrixLocation;
 
         //initialize transforms
-        player1.transform3D = MatrixTranslate(1000, 0, 0);
+        player1.transform3D = MatrixTranslate(1000, 500, 1000);
         player2.transform3D = MatrixTranslate(20, 0, 0);
 
         //set player number
         player1.playerNumber = 0;
         player2.playerNumber = 1;
 
-
-
 #pragma endregion
 
 #pragma region environment
         //set up the environment
-        Image heightmap = LoadImage("res/environments/0.png");
-        environment.generate(heightmap, {1000, 500, 1000});
+        Image heightmap = LoadImage("res/environments/2.png");
+        //environment.generate(heightmap, {512, 256, 512});
+        environment.generate(heightmap, {2500, 2500, 2500});
+        UnloadImage(heightmap);
 
         environment.model.materials[0].shader = environmentShader;
-
 
         Texture2D texGrass = LoadTexture("res/grass.png");
         Texture2D texStone = LoadTexture("res/stone.png");
@@ -104,11 +99,7 @@ namespace Dogfight
         environment.model.materials[0].maps[1].texture = texGrass;
         environment.model.materials[0].maps[2].texture = texStone;
 
-        
-        
 #pragma endregion
-
-
 
 #pragma region Rendering
         //rendering
@@ -133,33 +124,96 @@ namespace Dogfight
         //deltaTime
         deltaTime = GetFrameTime();
 
+        //hot map reloading
+        if (IsFileDropped())
+        {
+            //auto files = GetDroppedFiles(1);
+        }
+
         //get availability
-        if(IsGamepadAvailable(0)){
+        if (IsGamepadAvailable(0))
+        {
             player1Available = true;
-        }else{
+        }
+        else
+        {
             player1Available = false;
         }
 
-        if(IsGamepadAvailable(1)){
+        if (IsGamepadAvailable(1))
+        {
             player2Available = true;
-        }else{
+        }
+        else
+        {
             player2Available = false;
         }
 
         //update players
-        if(player1Available){
-            player1.update(deltaTime);              //update player
-            player1.setCamera(cameraP1);            //update camera
-
+        if (player1Available)
+        {
+            player1.update(deltaTime);   //update player
+            player1.setCamera(cameraP1); //update camera
         }
 
-        if(player2Available){
-            player2.update(deltaTime);              //update player
-            player2.setCamera(cameraP2);            //update camera
-
+        if (player2Available)
+        {
+            player2.update(deltaTime);   //update player
+            player2.setCamera(cameraP2); //update camera
         }
- 
 
+        //collision
+        if (environment.inMap(player1.position, 10.0f))
+        {
+            player1.active = false;
+        }
+        else
+        {
+            player1.active = true;
+        }
+
+        if (environment.inMap(player2.position, 10.0f))
+        {
+            player2.active = false;
+        }
+        else
+        {
+            player2.active = true;
+        }
+
+        //Player vs Player collision
+        if (Vector3Distance(player1.position, player2.position) < 30)
+        {
+            //Player
+        }
+
+        //Player vs bullets
+
+        //player1
+        for (int i = 0; i < 100; i++)
+        {
+            if (player2.bullets[i].active)
+            {
+                float distance = Vector3Distance(player1.position, player2.bullets[i].position);
+                if (distance < 1)
+                {
+                    player1.health -= 1;
+                }
+            }
+        }
+
+        //player2
+        for (int i = 0; i < 100; i++)
+        {
+            if (player1.bullets[i].active)
+            {
+                float distance = Vector3Distance(player2.position, player1.bullets[i].position);
+                if (distance < 1)
+                {
+                    player2.health -= 1;
+                }
+            }
+        }
     }
 
     void drawGame()
@@ -177,7 +231,22 @@ namespace Dogfight
             player2.draw();
             environment.draw();
 
-            player1.drawGizmo();
+            //draw bullets
+            for (int i = 0; i < 100; i++)
+            {
+                if (player1.bullets[i].active)
+                {
+                    DrawSphere(player1.bullets[i].position, 5, BLUE);
+                }
+            }
+
+            for (int i = 0; i < 100; i++)
+            {
+                if (player2.bullets[i].active)
+                {
+                    DrawSphere(player2.bullets[i].position, 0.5, RED);
+                }
+            }
 
             EndMode3D();
         }
@@ -201,8 +270,6 @@ namespace Dogfight
             player2.draw();
             environment.draw();
 
-            player1.drawGizmo();
-
             EndMode3D();
         }
         else
@@ -220,8 +287,9 @@ namespace Dogfight
         DrawTextureRec(renderTargetP1.texture, viewportP1, (Vector2){0, 0}, WHITE);
         DrawTextureRec(renderTargetP2.texture, viewportP2, (Vector2){0, (float)GetScreenHeight() / 2}, WHITE);
 
-        //DrawText(TextFormat("Airspeed: %f", player1.airspeed), 10, 10, 32, BLACK);
-
+        //DEBUG
+        DrawText(TextFormat("P1 healt: %d", player1.health), 10, 10, 20, BLACK);
+        //END_DEBUG
         EndDrawing();
     }
 

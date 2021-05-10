@@ -5,12 +5,13 @@
 #include "environment.h"
 #include "raymath.h"
 #include "util.h"
-#include <iostream>
+#include "bullet.h"
 
 #define PITCH_SPEED 0.05
 #define ROLL_SPEED 0.5
 #define YAW_SPEED 0.05
 #define AIR_SPEED 20
+#define BULLET_SPEED 250
 
 namespace Dogfight
 {
@@ -25,6 +26,9 @@ namespace Dogfight
         int normalMatrixLocation;
 
         int health;
+        Bullet bullets[100];        //the bullets the player shoots
+
+
 
         void update(float deltaTime); //update the player
         void draw();                  //draw the player mesh NOT render the player camera
@@ -43,5 +47,6 @@ namespace Dogfight
         float airspeed = 0.025f;
         float down;
         Matrix normalMatrix; //Normal matrix used for lighting
+        int bulletIndex = 0;    //used to determin where to put the new bullet 
     };
 } // namespace Dogfight

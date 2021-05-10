@@ -29,6 +29,26 @@ namespace Dogfight
 
         position = Vector3Transform((Vector3){0, 0, 0}, transform3D);
 
+        //Collision is done in game.cpp
+
+        //shoot
+        bool shoot = false;
+        shoot = IsGamepadButtonDown(playerNumber, GAMEPAD_BUTTON_RIGHT_FACE_DOWN);
+        if(shoot){
+            bullets[bulletIndex].position = position;
+            Vector3 vel = Vector3Transform({0, 0, 1}, normalMatrix);
+            bullets[bulletIndex].velocity = vel;
+            bullets[bulletIndex].active = true;
+            bulletIndex = (bulletIndex + 1)%100;
+        }
+
+        //update bullets
+        for(int i = 0; i < 100; i++){
+            if(bullets[i].active){
+                bullets[i].position = Vector3Add(bullets[i].position, Vector3Scale(bullets[i].velocity, dt * BULLET_SPEED));
+            }
+        }
+
         //rendering updates
         //some fancy roll animation
         Matrix model_transform3D = transform3D;
